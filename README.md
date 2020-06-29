@@ -1,2 +1,2 @@
 # customer-sys
-This is Custemer API
+This is Custemer API.
