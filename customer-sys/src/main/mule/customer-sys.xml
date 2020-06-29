@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="45eddfd9-19c2-4bc5-a65d-82914245c7d4" >
+		<http:listener-connection host="0.0.0.0" port="8011" />
+	</http:listener-config>
+	<os:object-store name="Customer_Object_store" doc:name="Object store" doc:id="d89ef003-6ca4-458c-9dd0-1912f2ea337b" />
+	<flow name="customer-sys-flow" doc:id="6fed6d14-7516-422c-8662-33a8997491ac" >
+		<http:listener doc:name="Listener" doc:id="0bf168f8-1aa8-414a-b0b3-1db24d2d522c" config-ref="HTTP_Listener_config" path="/customers"/>
+		<logger level="INFO" doc:name="Logger" doc:id="27378229-8c64-47c9-93ba-81dd55cf8ab3" message="Request to create customer #[payload]"/>
+		<set-variable value="#[uuid()]" doc:name="Generate customerID" doc:id="2663eccb-74a2-4f0c-8b58-abd3eaec1c34" variableName="customerID"/>
+		<ee:transform doc:name="Prepare Request" doc:id="8678ef9f-b67b-4514-80ad-f435ea28ceed" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customerId": vars.customerID,
+	"name": payload.name,
+	"dob": "6-28-1998",
+	"emailId": "cust@gmail.com"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<os:store doc:name="Store" doc:id="b450992b-237c-4a83-befc-b81c2c1b3e16" key="#[vars.customerID]" objectStore="Customer_Object_store"/>
+		<ee:transform doc:name="Prepare Response" doc:id="4a1d8893-60df-4e48-a70c-faf00fd5fa73" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Success",
+	message: "Customer Created Successfully",
+	CustomerId: vars.customerID
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
