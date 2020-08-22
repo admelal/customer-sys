@@ -41,6 +41,5 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="26fdecb6-6ae2-4420-8ee9-d6db10d0c617" message="Response #[payload]"/>
-		<logger level="INFO" doc:name="Logger" doc:id="c1fc4d25-3f65-410a-95e7-ae281ec1bbaf" message="This is Mesk's logger"/>
 	</flow>
 </mule>
