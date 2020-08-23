@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="retrieve-employeeFlow" doc:id="e1297613-c0b8-4f94-8c78-1598dd9f04df" >
+		<http:listener doc:name="Listener" doc:id="9656eab6-4047-4a7a-b046-e35c4c665965" config-ref="HTTP_Listener_config" path="/customers/{customerID}"/>
+		<os:retrieve doc:name="Retrieve" doc:id="750a645f-c135-4125-9e8e-f35effad3e9e" key="#[attributes.uriParams.customerID]" objectStore="Customer_Object_store"/>
+		<ee:transform doc:name="Transform Message" doc:id="2fa12755-779c-440d-b949-409e65a538c7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
